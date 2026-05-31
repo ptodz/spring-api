@@ -18,5 +18,3 @@ create table addresses
     constraint addresses_users_id_fk
         foreign key (user_id) references users (id)
 );
-
-
