@@ -1,11 +1,8 @@
 package com.codewithmosh.store.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -18,14 +15,11 @@ import java.util.UUID;
 @Table(name = "carts")
 public class Cart {
     @Id
-    @Size(max = 16)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, length = 16)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private UUID id;
 
-    @NotNull
-    @ColumnDefault("(curdate())")
-    @Column(name = "date_created", nullable = false)
+    @Column(name = "date_created", insertable = false, updatable = false)
     private LocalDate dateCreated;
 
     @OneToMany(mappedBy = "cart")
