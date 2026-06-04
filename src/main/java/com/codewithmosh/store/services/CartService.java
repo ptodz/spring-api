@@ -3,7 +3,6 @@ package com.codewithmosh.store.services;
 import com.codewithmosh.store.dtos.CartDto;
 import com.codewithmosh.store.dtos.CartItemDto;
 import com.codewithmosh.store.entities.Cart;
-import com.codewithmosh.store.exceptions.CartItemNotFoundException;
 import com.codewithmosh.store.exceptions.CartNotFoundException;
 import com.codewithmosh.store.exceptions.ProductNotFoundException;
 import com.codewithmosh.store.mappers.CartMapper;
@@ -50,18 +49,18 @@ public class CartService {
         return cartMapper.toDto(cart);
     }
 
-    public CartDto updateCart(UUID cartId, Long productId, int quantity) {
+    public CartItemDto updateCart(UUID cartId, Long productId, Integer quantity) {
         var cart = cartRepository.getCartWithItems(cartId).orElse(null);
         if (cart == null) {
             throw new CartNotFoundException();
         }
         var cartItem = cart.getItem(productId);
         if (cartItem == null) {
-            throw new CartItemNotFoundException();
+            throw new ProductNotFoundException();
         }
         cartItem.setQuantity(quantity);
         cartRepository.save(cart);
-        return cartMapper.toDto(cart);
+        return cartMapper.toDto(cartItem);
     }
 
     public void removeCartItem(UUID cartId, Long productId) {

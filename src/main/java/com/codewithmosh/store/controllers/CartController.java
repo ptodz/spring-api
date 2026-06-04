@@ -42,18 +42,16 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}")
-    public ResponseEntity<CartDto> getCart(@PathVariable UUID cartId) {
-        var cartDto = cartService.getCart(cartId);
-        return ResponseEntity.ok(cartDto);
+    public CartDto getCart(@PathVariable UUID cartId) {
+        return cartService.getCart(cartId);
     }
 
     @PutMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<?> updateCart(
+    public CartItemDto updateCart(
             @PathVariable("cartId") UUID cartId,
             @PathVariable("productId") Long productId,
             @Valid @RequestBody UpdateCardItemRequest request) {
-        var cart = cartService.updateCart(cartId, productId, request.getQuantity());
-        return ResponseEntity.ok(cart);
+        return cartService.updateCart(cartId, productId, request.getQuantity());
     }
 
     @DeleteMapping("/{cartId}/items/{productId}")
