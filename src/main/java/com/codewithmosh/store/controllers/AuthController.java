@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +40,7 @@ public class AuthController {
     @PostMapping("/validate")
     public boolean validateToken(@RequestHeader("Authorization") String authHeader) {
         var authToken = authHeader.replace("Bearer ", "");
-        return jwtService.validateToken(authHeader);
+        return jwtService.validateToken(authToken);
     }
 
     @GetMapping("/me")
