@@ -1,6 +1,6 @@
 package com.codewithmosh.store.entities;
 
 public enum Role {
-    CUSTOMER,
+    USER,
     ADMIN,
 }
