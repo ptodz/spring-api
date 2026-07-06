@@ -3,6 +3,7 @@ package com.codewithmosh.store.services;
 import com.codewithmosh.store.config.JwtConfig;
 import com.codewithmosh.store.entities.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
@@ -16,37 +17,26 @@ public class JwtService {
 
     private final JwtConfig jwtConfig;
 
-    public String generateAccessToken(User user) {
+    public Jwt generateAccessToken(User user) {
         return generateToken(user, jwtConfig.getAccessTokenExpiration());
     }
 
-    public String generateRefreshToken(User user) {
+    public Jwt generateRefreshToken(User user) {
         return generateToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
-    private String generateToken(User user, long tokenExpiration) {
-        return Jwts.builder()
-                .subject(user.getId().toString())
-                .claim("email", user.getEmail())
-                .claim("name", user.getName())
-                .claim("role", user.getRole())
+    private Jwt generateToken(User user, long tokenExpiration) {
+        var claims = Jwts.claims().subject(user.getId().toString())
+                .add("email", user.getEmail())
+                .add("name", user.getName())
+                .add("role", user.getRole().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
-                .signWith(jwtConfig.getSecretKey())
-                .compact();
+                .build();
+        return new Jwt(claims, jwtConfig.getSecretKey());
     }
 
-    public boolean validateToken(String token) {
-        try {
-            var claims = getClaims(token);
-            return claims.getExpiration().after(new Date());
-        }
-        catch (JwtException e) {
-            return false;
-        }
-    }
-
-    private Claims getClaims(String token) {
+    private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(jwtConfig.getSecretKey())
                 .build()
@@ -54,8 +44,13 @@ public class JwtService {
                 .getPayload();
     }
 
-    public Long getUserIdFromToken(String token) {
-        return Long.valueOf(getClaims(token).getSubject());
+    public Jwt parseToken(String token) {
+        try {
+            var claims = getClaimsFromToken(token);
+            return new Jwt(claims, jwtConfig.getSecretKey());
+        } catch (JwtException e) {
+            return null;
+        }
     }
 
 }
