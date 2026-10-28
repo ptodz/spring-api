@@ -68,10 +68,10 @@ public class UserController {
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
         log.info("UserDto created: {}", userDto);
 
-        return ResponseEntity.created(uriBuilder.path("/users/{id}")
-                .buildAndExpand(user.getId()).toUri()).body(userDto);
+        return ResponseEntity.created(uri).body(userDto);
     }
 
     @PutMapping("/{id}")
