@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -30,4 +31,8 @@ public class Product {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToMany(mappedBy = "product")
+    private Collection<OrderItem> orderItems;
+
 }

@@ -3,7 +3,6 @@ package com.codewithmosh.store.services;
 import com.codewithmosh.store.config.JwtConfig;
 import com.codewithmosh.store.entities.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
@@ -29,7 +28,7 @@ public class JwtService {
         var claims = Jwts.claims().subject(user.getId().toString())
                 .add("email", user.getEmail())
                 .add("name", user.getName())
-                .add("role", user.getRole().toString())
+                .add("role", user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .build();
