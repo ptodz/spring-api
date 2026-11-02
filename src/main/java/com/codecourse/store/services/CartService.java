@@ -77,7 +77,7 @@ public class CartService {
         if (cart == null) {
             throw new CartNotFoundException();
         }
-        cart.clearCart();
+        cart.clear();
         cartRepository.save(cart);
     }
 

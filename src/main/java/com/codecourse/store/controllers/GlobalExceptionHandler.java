@@ -1,6 +1,8 @@
 package com.codecourse.store.controllers;
 
 import com.codecourse.store.dtos.ErrorDto;
+import com.codecourse.store.exceptions.CartEmptyException;
+import com.codecourse.store.exceptions.CartNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,4 +30,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    @ExceptionHandler(CartNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleCartNotFoundException() {
+        return ResponseEntity.badRequest().body(
+                new ErrorDto("Cart not found.")
+        );
+    }
+
+    @ExceptionHandler(CartEmptyException.class)
+    public ResponseEntity<ErrorDto> handleCartEmptyException() {
+        return ResponseEntity.badRequest().body(
+                new ErrorDto("Cart is empty.")
+        );
+    }
 }
