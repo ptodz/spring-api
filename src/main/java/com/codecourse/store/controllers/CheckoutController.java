@@ -1,8 +1,15 @@
 package com.codecourse.store.controllers;
 
 import com.codecourse.store.dtos.CheckoutRequest;
+import com.codecourse.store.dtos.CheckoutResponse;
 import com.codecourse.store.dtos.ErrorDto;
+import com.codecourse.store.entities.Order;
+import com.codecourse.store.entities.OrderItem;
+import com.codecourse.store.entities.OrderStatus;
 import com.codecourse.store.repositories.CartRepository;
+import com.codecourse.store.repositories.OrderRepository;
+import com.codecourse.store.services.AuthService;
+import com.codecourse.store.services.CartService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CheckoutController {
 
     private final CartRepository cartRepository;
+    private final AuthService authService;
+    private final OrderRepository orderRepository;
+    private final CartService cartService;
 
     @PostMapping
     public ResponseEntity<?> checkout(@Valid @RequestBody CheckoutRequest request) {
@@ -32,6 +42,23 @@ public class CheckoutController {
                     new ErrorDto("cart is empty")
             );
         }
-        return null;
+
+        var order = new Order();
+        order.setTotalPrice(cart.getTotalPrice());
+        order.setStatus(OrderStatus.PENDING);
+        order.setCustomer(authService.getCurrentUser());
+
+        cart.getItems().forEach(item -> {
+            var orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(item.getProduct());
+            orderItem.setQuantity(item.getQuantity());
+            orderItem.setTotalPrice(item.getTotalPrice());
+            order.getItems().add(orderItem);
+        });
+
+        orderRepository.save(order);
+        cartService.clearCart(cart.getId());
+        return ResponseEntity.ok(new CheckoutResponse(order.getId()));
     }
 }
