@@ -54,6 +54,7 @@ public class CheckoutController {
             orderItem.setProduct(item.getProduct());
             orderItem.setQuantity(item.getQuantity());
             orderItem.setTotalPrice(item.getTotalPrice());
+            orderItem.setUnitPrice(item.getProduct().getPrice());
             order.getItems().add(orderItem);
         });
 
